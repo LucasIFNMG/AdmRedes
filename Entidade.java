@@ -5,6 +5,13 @@ class Entidade{
     private int ack;
     private String dados;
 
+    public Entidade(int syn, int ack, String dados)
+    {
+        this.syn = syn;
+        this.ack = ack;
+        this.dados = dados;
+    }
+
     Random random = new Random();
 
     public int getSyn()
@@ -37,13 +44,6 @@ class Entidade{
         this.dados = dados;
     }
 
-    public Entidade(int syn, int ack, String dados)
-    {
-        this.syn = syn;
-        this.ack = ack;
-        this.dados = dados;
-    }
-
     public int getNumeroRandom()
     {
         return random.nextInt(100); // 4294967296 - 1
@@ -52,7 +52,7 @@ class Entidade{
     // 1ª via
     public int handShakeCliente()
     {
-        // 0 a (4294967296-1)
+        // 0 a (2^32)-1
         this.setSyn(getNumeroRandom() );
         return this.syn;
     }
@@ -60,7 +60,7 @@ class Entidade{
     // 2ª via
     public int handShakeServidor(int numero)
     {
-        numero = this.handShakeCliente()+1; // olhar depois
+        // numero = this.handShakeCliente()+1; 
         
         if(numero != (this.getSyn()+1))
         {
@@ -69,7 +69,8 @@ class Entidade{
         }
         else
         {
-            this.setAck(this.getNumeroRandom() );
+            this.setSyn(this.getNumeroRandom() );
+            this.setAck(numero);
             return this.ack;
         }
     }
@@ -77,7 +78,7 @@ class Entidade{
     // 3ª via
     public String handShakeClienteFinal(int numero, String dados)
     {
-        numero = this.ack + 1; // olhar depois
+        numero = this.getAck() + 1; 
         if(numero != (this.ack + 1))
         {
             return "NÃO foi possível estabelecer a conexão! (3ª via)";
